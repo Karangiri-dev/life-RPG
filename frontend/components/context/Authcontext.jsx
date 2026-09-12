@@ -14,15 +14,17 @@ export const AuthProvider = ({ children }) => {
   });
 
   // Login
-  const login = (user) => {
-    localStorage.setItem("lifeRPGLoggedIn", "true");
+ const login = (user) => {
+  localStorage.setItem("lifeRPGLoggedIn", "true");
 
-    localStorage.setItem("lifeRPGCurrentUser", JSON.stringify(user));
+  localStorage.setItem(
+    "lifeRPGCurrentUser",
+    JSON.stringify(user)
+  );
 
-    setIsLoggedIn(true);
-    setCurrentUser(user);
-  };
-
+  setIsLoggedIn(true);
+  setCurrentUser(user);
+};
   // Logout
   const logout = () => {
     localStorage.removeItem("lifeRPGLoggedIn");

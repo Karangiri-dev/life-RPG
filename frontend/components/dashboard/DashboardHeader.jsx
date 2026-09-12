@@ -24,7 +24,7 @@ const { currentUser } = useAuth();
 
           <div>
             <p className="text-lg text-slate-500 font-medium">
-             Welcome,  {currentUser?.name || "Hero"} 👋
+            Welcome, {currentUser?.userName || "Hero"} 👋
             </p>
 
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
