@@ -1,11 +1,10 @@
-
 import React, { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem("lifeRPGLoggedIn") === "true"
+    localStorage.getItem("lifeRPGLoggedIn") === "true",
   );
 
   const [currentUser, setCurrentUser] = useState(() => {
@@ -18,20 +17,10 @@ export const AuthProvider = ({ children }) => {
   const login = (user) => {
     localStorage.setItem("lifeRPGLoggedIn", "true");
 
-    localStorage.setItem(
-      "lifeRPGCurrentUser",
-      JSON.stringify({
-        name: user.name,
-        email: user.email,
-      })
-    );
+    localStorage.setItem("lifeRPGCurrentUser", JSON.stringify(user));
 
     setIsLoggedIn(true);
-
-    setCurrentUser({
-      name: user.name,
-      email: user.email,
-    });
+    setCurrentUser(user);
   };
 
   // Logout
@@ -50,12 +39,10 @@ export const AuthProvider = ({ children }) => {
         currentUser,
         login,
         logout,
-      }}
-    >
+      }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => useContext(AuthContext);
-

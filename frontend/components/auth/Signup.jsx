@@ -21,53 +21,48 @@ const Signup = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
+  try {
     setError("");
 
-    // Check password
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
-    // Get all existing users
-    const existingUsers =
-      JSON.parse(localStorage.getItem("lifeRPGUsers")) || [];
-
-    // Check existing user
-    const userExists = existingUsers.some(
-      (user) => user.email === formData.email
+    const response = await fetch(
+      "http://localhost:3000/api/auth/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          userName: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      }
     );
 
-    if (userExists) {
-      setError("An account with this email already exists.");
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.message || "Registration failed");
       return;
     }
 
-    // Create user
-    const user = {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-    };
-
-    // Add new user to existing users
-    existingUsers.push(user);
-
-    // Save all users
-    localStorage.setItem(
-      "lifeRPGUsers",
-      JSON.stringify(existingUsers)
-    );
-
-    // Go to Login page
     navigate("/login");
-  };
-
+  } catch (error) {
+    console.log(error);
+    setError("Something went wrong");
+  }
+};
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[radial-gradient(circle_at_50%_-20%,_#ffe9d6_0%,_#fff7f0_45%,_#ffffff_100%)] px-4 py-8">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[radial-gradient(circle_at_50%_-20%,#ffe9d6_0%,#fff7f0_45%,#ffffff_100%)] px-4 py-8">
 
       {/* Brand Logo */}
       <div className="flex items-center gap-2 font-bold text-2xl text-slate-900 tracking-tight mb-8 cursor-pointer">
@@ -80,7 +75,7 @@ const Signup = () => {
 
         {/* Badge */}
         <div className="flex justify-center mb-6">
-          <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+          <div className="bg-linear-to-r from-orange-500 to-amber-500 text-white text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
             <span>&#10022;</span>
             <span>Start Your Journey</span>
           </div>

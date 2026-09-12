@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/context/Authcontext";
@@ -24,44 +23,42 @@ const LoginPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setError("");
+    try {
+      setError("");
 
-    // Get all saved users
-    const savedUsers =
-      JSON.parse(localStorage.getItem("lifeRPGUsers")) || [];
+      const response = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // IMPORTANT
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
 
-    // Check if users exist
-    if (savedUsers.length === 0) {
-      setError("No account found. Please create an account first.");
-      return;
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Login failed");
+        return;
+      }
+
+      login(data.user);
+
+      navigate("/", { replace: true });
+    } catch (error) {
+      console.log(error);
+
+      setError("Something went wrong");
     }
-
-    // Find user with matching email and password
-    const user = savedUsers.find(
-      (item) =>
-        item.email === formData.email &&
-        item.password === formData.password
-    );
-
-    // Check login details
-    if (!user) {
-      setError("Invalid email or password.");
-      return;
-    }
-
-    // Login
-    login(user);
-
-    // Go to dashboard
-    navigate("/", { replace: true });
   };
-
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[radial-gradient(circle_at_50%_-20%,_#ffe9d6_0%,_#fff7f0_45%,_#ffffff_100%)] px-4 py-8">
-
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[radial-gradient(circle_at_50%_-20%,#ffe9d6_0%,#fff7f0_45%,#ffffff_100%)] px-4 py-8">
       {/* Brand Logo */}
       <div className="flex items-center gap-2 font-bold text-2xl text-slate-900 tracking-tight mb-8 cursor-pointer">
         <span className="text-orange-500 text-xl">&#10038;</span>
@@ -70,7 +67,6 @@ const LoginPage = () => {
 
       {/* Login Card */}
       <div className="w-full max-w-md bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-3xl p-8 shadow-xl shadow-orange-500/5">
-
         {/* Badge */}
         <div className="flex justify-center mb-6">
           <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
@@ -88,7 +84,6 @@ const LoginPage = () => {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-
           {/* Email */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2 ml-1">
@@ -117,8 +112,7 @@ const LoginPage = () => {
 
               <button
                 type="button"
-                className="text-xs text-orange-600 hover:underline font-medium"
-              >
+                className="text-xs text-orange-600 hover:underline font-medium">
                 Forgot password?
               </button>
             </div>
@@ -163,8 +157,7 @@ const LoginPage = () => {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-black hover:bg-slate-800 text-white font-semibold text-sm py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg mt-2"
-          >
+            className="w-full bg-black hover:bg-slate-800 text-white font-semibold text-sm py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg mt-2">
             Sign In
           </button>
         </form>
@@ -175,12 +168,10 @@ const LoginPage = () => {
           <button
             type="button"
             onClick={() => navigate("/signup")}
-            className="text-orange-600 font-semibold hover:underline"
-          >
+            className="text-orange-600 font-semibold hover:underline">
             Start Free Trial
           </button>
         </p>
-
       </div>
     </div>
   );
