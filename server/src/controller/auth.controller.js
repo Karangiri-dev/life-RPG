@@ -14,6 +14,7 @@ export const register = async (req, res) => {
         message: "userName, email and password are required",
       });
     }
+
     const existingUser = await User.findOne({
       $or: [{ email }, { userName }],
     });
@@ -83,15 +84,15 @@ export const login = async (req, res) => {
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: 15 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -106,8 +107,6 @@ export const login = async (req, res) => {
         xp: user.xp,
         gold: user.gold,
         streak: user.streak,
-
-        // 👇 Add this
         attributes: user.attributes,
       },
     });
@@ -120,6 +119,7 @@ export const login = async (req, res) => {
     });
   }
 };
+
 export const logout = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
@@ -133,8 +133,17 @@ export const logout = async (req, res) => {
       }
     }
 
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
 
     return res.status(200).json({
       success: true,
@@ -170,7 +179,10 @@ export const refreshAccessToken = async (req, res) => {
       });
     }
 
-    const decoded = jwt.verify(refreshToken, config.REFRESH_TOKEN_SECRET);
+    const decoded = jwt.verify(
+      refreshToken,
+      config.REFRESH_TOKEN_SECRET,
+    );
 
     const accessToken = jwt.sign(
       {
@@ -184,8 +196,8 @@ export const refreshAccessToken = async (req, res) => {
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: 15 * 60 * 1000,
     });
 
@@ -229,4 +241,3 @@ export const getCurrentUser = async (req, res) => {
     });
   }
 };
-
