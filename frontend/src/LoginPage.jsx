@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/context/Authcontext";
 import { apiFetch } from "../utils/apifetch";
+import gsap from "gsap";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -15,6 +15,159 @@ const LoginPage = () => {
   });
 
   const [error, setError] = useState("");
+
+  // GSAP refs
+  const pageRef = useRef(null);
+  const logoRef = useRef(null);
+  const cardRef = useRef(null);
+  const badgeRef = useRef(null);
+  const titleRef = useRef(null);
+  const subtitleRef = useRef(null);
+  const formRef = useRef(null);
+  const signupRef = useRef(null);
+  const errorRef = useRef(null);
+
+  // Page animation
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline();
+
+      tl.fromTo(
+        pageRef.current,
+        {
+          opacity: 0,
+        },
+        {
+          opacity: 1,
+          duration: 0.5,
+          ease: "power2.out",
+        }
+      )
+        .fromTo(
+          logoRef.current,
+          {
+            opacity: 0,
+            y: -20,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          "-=0.3"
+        )
+        .fromTo(
+          cardRef.current,
+          {
+            opacity: 0,
+            y: 30,
+            scale: 0.96,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: "power3.out",
+          },
+          "-=0.2"
+        )
+        .fromTo(
+          badgeRef.current,
+          {
+            opacity: 0,
+            scale: 0.8,
+          },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.4,
+            ease: "back.out(1.5)",
+          },
+          "-=0.3"
+        )
+        .fromTo(
+          titleRef.current,
+          {
+            opacity: 0,
+            y: 15,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out",
+          },
+          "-=0.2"
+        )
+        .fromTo(
+          subtitleRef.current,
+          {
+            opacity: 0,
+            y: 10,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out",
+          },
+          "-=0.25"
+        )
+        .fromTo(
+          formRef.current,
+          {
+            opacity: 0,
+            y: 20,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          "-=0.2"
+        )
+        .fromTo(
+          signupRef.current,
+          {
+            opacity: 0,
+            y: 10,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out",
+          },
+          "-=0.2"
+        );
+    }, pageRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Error animation
+  useEffect(() => {
+    if (!error || !errorRef.current) return;
+
+    gsap.fromTo(
+      errorRef.current,
+      {
+        opacity: 0,
+        y: -8,
+        scale: 0.95,
+      },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.3,
+        ease: "power2.out",
+      }
+    );
+  }, [error]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -36,7 +189,7 @@ const LoginPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // IMPORTANT
+        credentials: "include",
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
@@ -55,45 +208,52 @@ const LoginPage = () => {
       navigate("/", { replace: true });
     } catch (error) {
       console.log(error);
-
       setError("Something went wrong");
     }
   };
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
-      className="min-h-screen w-full flex flex-col items-center justify-center bg-[radial-gradient(circle_at_50%_-20%,#ffe9d6_0%,#fff7f0_45%,#ffffff_100%)] px-4 py-8">
+    <div
+      ref={pageRef}
+      className="min-h-screen w-full flex flex-col items-center justify-center bg-[radial-gradient(circle_at_50%_-20%,_#ffe9d6_0%,_#fff7f0_45%,_#ffffff_100%)] px-4 py-8"
+    >
       {/* Brand Logo */}
-      <div className="flex items-center gap-2 font-bold text-2xl text-slate-900 tracking-tight mb-8 cursor-pointer">
+      <div
+        ref={logoRef}
+        className="flex items-center gap-2 font-bold text-2xl text-slate-900 tracking-tight mb-8 cursor-pointer"
+      >
         <span className="text-orange-500 text-xl">&#10038;</span>
         <span>Life RPG</span>
       </div>
 
       {/* Login Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 16, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.45, delay: 0.05 }}
-        className="w-full max-w-md bg-white/85 backdrop-blur-md border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-xl shadow-orange-500/5">
+      <div
+        ref={cardRef}
+        className="w-full max-w-md bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-3xl p-8 shadow-xl shadow-orange-500/5"
+      >
         {/* Badge */}
-        <div className="flex justify-center mb-6">
+        <div ref={badgeRef} className="flex justify-center mb-6">
           <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
             <span>&#10022;</span>
             <span>Welcome</span>
           </div>
         </div>
 
-        <h1 className="text-3xl font-extrabold text-slate-900 text-center tracking-tight mb-2">
+        <h1
+          ref={titleRef}
+          className="text-3xl font-extrabold text-slate-900 text-center tracking-tight mb-2"
+        >
           Sign In to Account
         </h1>
 
-        <p className="text-sm text-slate-500 text-center mb-8">
+        <p
+          ref={subtitleRef}
+          className="text-sm text-slate-500 text-center mb-8"
+        >
           Enter your credentials to access your Life RPG dashboard.
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
           {/* Email */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2 ml-1">
@@ -122,7 +282,8 @@ const LoginPage = () => {
 
               <button
                 type="button"
-                className="text-xs text-orange-600 hover:underline font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 rounded">
+                className="text-xs text-orange-600 hover:underline font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 rounded"
+              >
                 Forgot password?
               </button>
             </div>
@@ -159,7 +320,10 @@ const LoginPage = () => {
 
           {/* Error */}
           {error && (
-            <p className="text-sm text-red-500 text-center font-medium">
+            <p
+              ref={errorRef}
+              className="text-sm text-red-500 text-center font-medium"
+            >
               {error}
             </p>
           )}
@@ -167,23 +331,28 @@ const LoginPage = () => {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-black hover:bg-slate-800 text-white font-semibold text-sm py-3.5 rounded-full cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400">
+            className="w-full bg-black hover:bg-slate-800 text-white font-semibold text-sm py-3.5 rounded-full cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
+          >
             Sign In
           </button>
         </form>
 
         {/* Signup */}
-        <p className="text-center text-sm text-slate-600 mt-8">
+        <p
+          ref={signupRef}
+          className="text-center text-sm text-slate-600 mt-8"
+        >
           Don't have an account?{" "}
           <button
             type="button"
             onClick={() => navigate("/signup")}
-            className="text-orange-600 font-semibold hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 rounded">
+            className="text-orange-600 font-semibold hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 rounded"
+          >
             Start Free Trial
           </button>
         </p>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 

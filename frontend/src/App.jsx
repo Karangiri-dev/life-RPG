@@ -13,6 +13,7 @@ import Signup from "./../components/auth/Signup";
 import { AuthProvider } from "./../components/context/Authcontext";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import StreaksHistory from './../components/streak/StreaksHistory';
+import ProfilePage from './../components/common/profile';
 
 const App = () => {
   return (
@@ -86,6 +87,10 @@ const App = () => {
                 </ProtectedRoute> 
               } 
               />
+              <Route path="/profile" element={
+                <ProfilePage />
+                } 
+                />
               
 
           </Routes>

@@ -1,7 +1,7 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef } from "react";
 import { Coins, Gift } from "lucide-react";
 import { useAuth } from "../context/Authcontext";
+import gsap from "gsap";
 
 const RewardShop = () => {
   const { currentUser, setCurrentUser } = useAuth();
@@ -10,6 +10,12 @@ const RewardShop = () => {
   const [messageType, setMessageType] = React.useState("");
 
   const gold = currentUser?.gold || 0;
+
+  const pageRef = useRef(null);
+  const headerRef = useRef(null);
+  const goldRef = useRef(null);
+  const messageRef = useRef(null);
+  const rewardCardsRef = useRef([]);
 
   const rewards = [
     {
@@ -32,6 +38,99 @@ const RewardShop = () => {
     },
   ];
 
+  // Page animation
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline();
+
+      tl.fromTo(
+        pageRef.current,
+        {
+          opacity: 0,
+          y: 25,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power3.out",
+        }
+      )
+        .fromTo(
+          headerRef.current,
+          {
+            opacity: 0,
+            y: -15,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out",
+          },
+          "-=0.3"
+        )
+        .fromTo(
+          goldRef.current,
+          {
+            opacity: 0,
+            x: 20,
+            scale: 0.9,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            scale: 1,
+            duration: 0.4,
+            ease: "back.out(1.5)",
+          },
+          "-=0.3"
+        );
+
+      // Reward cards
+      gsap.fromTo(
+        rewardCardsRef.current.filter(Boolean),
+        {
+          opacity: 0,
+          y: 30,
+          scale: 0.96,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          stagger: 0.12,
+          delay: 0.3,
+          ease: "power3.out",
+        }
+      );
+    }, pageRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Message animation
+  useEffect(() => {
+    if (!message || !messageRef.current) return;
+
+    gsap.fromTo(
+      messageRef.current,
+      {
+        opacity: 0,
+        y: -10,
+        scale: 0.98,
+      },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.3,
+        ease: "power2.out",
+      }
+    );
+  }, [message]);
+
   const handleRedeem = (reward) => {
     if (gold < reward.cost) {
       setMessage("Not enough Gold!");
@@ -44,7 +143,10 @@ const RewardShop = () => {
       gold: currentUser.gold - reward.cost,
     };
 
-    localStorage.setItem("lifeRPGCurrentUser", JSON.stringify(updatedUser));
+    localStorage.setItem(
+      "lifeRPGCurrentUser",
+      JSON.stringify(updatedUser)
+    );
 
     setCurrentUser(updatedUser);
 
@@ -53,14 +155,16 @@ const RewardShop = () => {
   };
 
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="min-h-screen bg-slate-50 px-4 py-6 sm:p-8">
+    <section
+      ref={pageRef}
+      className="min-h-screen bg-slate-50 px-4 py-6 sm:p-8"
+    >
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
+        <div
+          ref={headerRef}
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5"
+        >
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
               Reward Shop
@@ -72,35 +176,40 @@ const RewardShop = () => {
           </div>
 
           {/* Gold */}
-          <div className="flex items-center gap-2 bg-white border border-slate-200 px-4 py-3 rounded-xl shadow-sm">
+          <div
+            ref={goldRef}
+            className="flex items-center gap-2 bg-white border border-slate-200 px-4 py-3 rounded-xl shadow-sm"
+          >
             <Coins size={20} className="text-orange-500" />
 
-            <span className="font-bold text-slate-900">{gold} Gold</span>
+            <span className="font-bold text-slate-900">
+              {gold} Gold
+            </span>
           </div>
         </div>
 
         {/* Message */}
         {message && (
           <div
+            ref={messageRef}
             className={`mb-5 p-3 rounded-xl border font-medium ${
-              messageType === "success" ?
-                "bg-green-50 border-green-200 text-green-700"
-              : "bg-red-50 border-red-200 text-red-700"
-            }`}>
+              messageType === "success"
+                ? "bg-green-50 border-green-200 text-green-700"
+                : "bg-red-50 border-red-200 text-red-700"
+            }`}
+          >
             {message}
           </div>
         )}
 
         {/* Rewards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {rewards.map((reward) => (
-            <motion.div
+          {rewards.map((reward, index) => (
+            <div
               key={reward.id}
-              whileHover={{
-                y: -3,
-                boxShadow: "0 12px 26px rgba(15, 23, 42, 0.08)",
-              }}
-              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm transition-colors hover:border-orange-200">
+              ref={(el) => (rewardCardsRef.current[index] = el)}
+              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-orange-200 transition"
+            >
               <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center mb-4">
                 <Gift size={24} className="text-orange-600" />
               </div>
@@ -119,19 +228,18 @@ const RewardShop = () => {
                   {reward.cost} Gold
                 </div>
 
-                <motion.button
+                <button
                   onClick={() => handleRedeem(reward)}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold cursor-pointer hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 transition">
+                  className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold cursor-pointer hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 transition"
+                >
                   Redeem
-                </motion.button>
+                </button>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 };
 

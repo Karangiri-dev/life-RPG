@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Dumbbell,
@@ -7,8 +7,8 @@ import {
   HeartPulse,
   TrendingUp,
 } from "lucide-react";
-
 import { useAuth } from "../context/Authcontext";
+import gsap from "gsap";
 
 const CharacterStats = () => {
   const { currentUser } = useAuth();
@@ -20,11 +20,17 @@ const CharacterStats = () => {
     Health: currentUser?.attributes?.health || 70,
   };
 
+  const pageRef = useRef(null);
+  const headerRef = useRef(null);
+  const cardsRef = useRef([]);
+  const progressRefs = useRef([]);
+
   const attributeData = [
     {
       name: "Strength",
       icon: Dumbbell,
-      description: "Your physical power, fitness and physical performance.",
+      description:
+        "Your physical power, fitness and physical performance.",
       skills: ["Exercise", "Workout", "Physical Activity"],
     },
     {
@@ -37,25 +43,105 @@ const CharacterStats = () => {
     {
       name: "Discipline",
       icon: ShieldCheck,
-      description: "Your consistency, focus and ability to follow your goals.",
+      description:
+        "Your consistency, focus and ability to follow your goals.",
       skills: ["Consistency", "Focus", "Time Management"],
     },
     {
       name: "Health",
       icon: HeartPulse,
-      description: "Your overall energy, healthy habits and wellbeing.",
+      description:
+        "Your overall energy, healthy habits and wellbeing.",
       skills: ["Sleep", "Nutrition", "Daily Activity"],
     },
   ];
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Page entrance
+      gsap.fromTo(
+        pageRef.current,
+        {
+          opacity: 0,
+          y: 25,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power3.out",
+        }
+      );
+
+      // Header animation
+      gsap.fromTo(
+        headerRef.current,
+        {
+          opacity: 0,
+          y: -20,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          delay: 0.2,
+          ease: "power2.out",
+        }
+      );
+
+      // Attribute cards animation
+      gsap.fromTo(
+        cardsRef.current.filter(Boolean),
+        {
+          opacity: 0,
+          y: 30,
+          scale: 0.96,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          stagger: 0.12,
+          delay: 0.3,
+          ease: "power3.out",
+        }
+      );
+
+      // Progress bars animation
+      progressRefs.current.forEach((bar, index) => {
+        if (!bar) return;
+
+        const value = attributes[attributeData[index].name];
+
+        gsap.fromTo(
+          bar,
+          {
+            width: "0%",
+          },
+          {
+            width: `${Math.min(value, 100)}%`,
+            duration: 1,
+            delay: 0.7 + index * 0.12,
+            ease: "power2.out",
+          }
+        );
+      });
+    }, pageRef);
+
+    return () => ctx.revert();
+  }, [attributes]);
+
   return (
-    <motion.main
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <main
+      ref={pageRef}
+      className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
+    >
       {/* Page Header */}
-      <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 shadow-sm">
+      <section
+        ref={headerRef}
+        className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 shadow-sm"
+      >
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0">
             <TrendingUp size={23} className="text-orange-500" />
@@ -75,18 +161,20 @@ const CharacterStats = () => {
 
       {/* Attributes */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-6">
-        {attributeData.map((attribute) => {
+        {attributeData.map((attribute, index) => {
           const Icon = attribute.icon;
           const value = attributes[attribute.name];
 
           return (
             <motion.div
               key={attribute.name}
+              ref={(el) => (cardsRef.current[index] = el)}
               whileHover={{
                 y: -3,
                 boxShadow: "0 12px 26px rgba(15, 23, 42, 0.08)",
               }}
-              className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm transition-colors hover:border-orange-200">
+              className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm transition-colors hover:border-orange-200"
+            >
               {/* Title */}
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
@@ -99,7 +187,9 @@ const CharacterStats = () => {
                       {attribute.name}
                     </h2>
 
-                    <p className="text-xs text-slate-400">Attribute Level</p>
+                    <p className="text-xs text-slate-400">
+                      Attribute Level
+                    </p>
                   </div>
                 </div>
 
@@ -127,9 +217,10 @@ const CharacterStats = () => {
 
                 <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-linear-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-500"
+                    ref={(el) => (progressRefs.current[index] = el)}
+                    className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-500"
                     style={{
-                      width: `${Math.min(value, 100)}%`,
+                      width: "0%",
                     }}
                   />
                 </div>
@@ -145,7 +236,8 @@ const CharacterStats = () => {
                   {attribute.skills.map((skill) => (
                     <span
                       key={skill}
-                      className="text-xs font-medium text-slate-600 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg">
+                      className="text-xs font-medium text-slate-600 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg"
+                    >
                       {skill}
                     </span>
                   ))}
@@ -155,7 +247,7 @@ const CharacterStats = () => {
           );
         })}
       </section>
-    </motion.main>
+    </main>
   );
 };
 

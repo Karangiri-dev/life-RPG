@@ -1,7 +1,7 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef } from "react";
 import { Sword, Sparkles } from "lucide-react";
 import { useAuth } from "../context/Authcontext";
+import gsap from "gsap";
 
 const DashboardHeader = () => {
   const { currentUser } = useAuth();
@@ -9,19 +9,114 @@ const DashboardHeader = () => {
   const currentLevel = currentUser?.level || 1;
   const currentXP = currentUser?.xp || 0;
 
-  // Backend ke hisaab se
   const xpNeeded = currentLevel * 100;
   const progress = Math.min((currentXP / xpNeeded) * 100, 100);
 
+  const headerRef = useRef(null);
+  const welcomeRef = useRef(null);
+  const levelRef = useRef(null);
+  const xpSectionRef = useRef(null);
+  const xpBarRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline();
+
+      // Main header animation
+      tl.fromTo(
+        headerRef.current,
+        {
+          opacity: 0,
+          y: 30,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power3.out",
+        }
+      )
+
+        // Welcome section
+        .fromTo(
+          welcomeRef.current,
+          {
+            opacity: 0,
+            x: -25,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          "-=0.3"
+        )
+
+        // Level badge
+        .fromTo(
+          levelRef.current,
+          {
+            opacity: 0,
+            x: 25,
+            scale: 0.9,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            scale: 1,
+            duration: 0.4,
+            ease: "back.out(1.5)",
+          },
+          "-=0.4"
+        )
+
+        // XP section
+        .fromTo(
+          xpSectionRef.current,
+          {
+            opacity: 0,
+            y: 20,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          "-=0.2"
+        );
+
+      // XP bar animation
+      gsap.fromTo(
+        xpBarRef.current,
+        {
+          width: "0%",
+        },
+        {
+          width: `${progress}%`,
+          duration: 1,
+          delay: 0.5,
+          ease: "power2.out",
+        }
+      );
+    }, headerRef);
+
+    return () => ctx.revert();
+  }, [progress]);
+
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-      className="w-full bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 shadow-sm">
+    <section
+      ref={headerRef}
+      className="w-full bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 shadow-sm"
+    >
       {/* Top Content */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-        <div className="flex items-start gap-3">
+        {/* Welcome */}
+        <div
+          ref={welcomeRef}
+          className="flex items-start gap-3"
+        >
           <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0">
             <Sword size={23} className="text-orange-500" />
           </div>
@@ -42,15 +137,23 @@ const DashboardHeader = () => {
         </div>
 
         {/* Level */}
-        <div className="flex items-center gap-2 self-start sm:self-center bg-slate-900 text-white px-4 py-2 rounded-xl">
+        <div
+          ref={levelRef}
+          className="flex items-center gap-2 self-start sm:self-center bg-slate-900 text-white px-4 py-2 rounded-xl"
+        >
           <Sparkles size={17} className="text-orange-400" />
 
-          <span className="text-sm font-semibold">Level {currentLevel}</span>
+          <span className="text-sm font-semibold">
+            Level {currentLevel}
+          </span>
         </div>
       </div>
 
       {/* XP Section */}
-      <div className="mt-7">
+      <div
+        ref={xpSectionRef}
+        className="mt-7"
+      >
         <div className="flex items-center justify-between mb-2">
           <div>
             <p className="text-sm font-semibold text-slate-800">
@@ -70,17 +173,19 @@ const DashboardHeader = () => {
         {/* XP Bar */}
         <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
           <div
-            className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-500"
-            style={{ width: `${progress}%` }}
+            ref={xpBarRef}
+            className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full"
           />
         </div>
 
         {/* XP Footer */}
         <div className="flex justify-between mt-2">
-          <span className="text-xs text-slate-400">Level {currentLevel}</span>
+          <span className="text-xs text-slate-400">
+            Level {currentLevel}
+          </span>
 
           <span className="text-xs text-slate-400">
-            {xpNeeded - currentXP} XP to next level
+            {Math.max(xpNeeded - currentXP, 0)} XP to next level
           </span>
 
           <span className="text-xs text-slate-400">
@@ -88,7 +193,7 @@ const DashboardHeader = () => {
           </span>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 };
 
