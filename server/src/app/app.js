@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://life-ik87d39wo-ptamitkumarojha-9919.vercel.app",
     credentials: true,
   }),
 );  
