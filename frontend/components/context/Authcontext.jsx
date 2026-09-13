@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem("lifeRPGLoggedIn") === "true",
+    localStorage.getItem("lifeRPGLoggedIn") === "true"
   );
 
   const [currentUser, setCurrentUser] = useState(() => {
@@ -13,15 +13,39 @@ export const AuthProvider = ({ children }) => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
+  // 👇 ADD THIS WHOLE useEffect
+  useEffect(() => {
+    const handleUserUpdate = () => {
+      const savedUser = localStorage.getItem("lifeRPGCurrentUser");
+
+      if (savedUser) {
+        setCurrentUser(JSON.parse(savedUser));
+      }
+    };
+
+    window.addEventListener("userUpdated", handleUserUpdate);
+
+    return () => {
+      window.removeEventListener(
+        "userUpdated",
+        handleUserUpdate
+      );
+    };
+  }, []);
+
   // Login
   const login = (user) => {
     localStorage.setItem("lifeRPGLoggedIn", "true");
 
-    localStorage.setItem("lifeRPGCurrentUser", JSON.stringify(user));
+    localStorage.setItem(
+      "lifeRPGCurrentUser",
+      JSON.stringify(user)
+    );
 
     setIsLoggedIn(true);
     setCurrentUser(user);
   };
+
   // Logout
   const logout = () => {
     localStorage.removeItem("lifeRPGLoggedIn");
@@ -36,10 +60,11 @@ export const AuthProvider = ({ children }) => {
       value={{
         isLoggedIn,
         currentUser,
-        setCurrentUser,
+        setCurrentUser, // 👈 ye bhi expose kar de
         login,
         logout,
-      }}>
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

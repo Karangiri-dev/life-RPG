@@ -1,18 +1,26 @@
 import React from "react";
 import { Sword, Sparkles } from "lucide-react";
-import { useXP } from "../context/XPContext";
 import { useAuth } from "../context/Authcontext";
 
 const DashboardHeader = () => {
-  const { totalXP, levelData } = useXP();
-const { currentUser } = useAuth();
+  const { currentUser } = useAuth();
+
+  const currentLevel = currentUser?.level || 1;
+  const currentXP = currentUser?.xp || 0;
+
+  // Backend ke hisaab se
+  const xpNeeded = currentLevel * 100;
+  const progress = Math.min(
+    (currentXP / xpNeeded) * 100,
+    100
+  );
+
   return (
     <section className="w-full bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 shadow-sm">
 
       {/* Top Content */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
 
-        {/* Welcome */}
         <div className="flex items-start gap-3">
 
           <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0">
@@ -24,7 +32,7 @@ const { currentUser } = useAuth();
 
           <div>
             <p className="text-lg text-slate-500 font-medium">
-            Welcome, {currentUser?.userName || "Hero"} 👋
+              Welcome, {currentUser?.userName || "Hero"} 👋
             </p>
 
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
@@ -47,7 +55,7 @@ const { currentUser } = useAuth();
           />
 
           <span className="text-sm font-semibold">
-            Level {levelData.level}
+            Level {currentLevel}
           </span>
 
         </div>
@@ -70,7 +78,7 @@ const { currentUser } = useAuth();
           </div>
 
           <span className="text-sm font-bold text-orange-600">
-            {levelData.xpInCurrentLevel} / {levelData.xpNeeded} XP
+            {currentXP} / {xpNeeded} XP
           </span>
 
         </div>
@@ -80,7 +88,7 @@ const { currentUser } = useAuth();
 
           <div
             className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-500"
-            style={{ width: `${levelData.progress}%` }}
+            style={{ width: `${progress}%` }}
           />
 
         </div>
@@ -89,15 +97,15 @@ const { currentUser } = useAuth();
         <div className="flex justify-between mt-2">
 
           <span className="text-xs text-slate-400">
-            Level {levelData.level}
+            Level {currentLevel}
           </span>
 
           <span className="text-xs text-slate-400">
-            {levelData.xpNeeded - levelData.xpInCurrentLevel} XP to next level
+            {xpNeeded - currentXP} XP to next level
           </span>
 
           <span className="text-xs text-slate-400">
-            Level {levelData.level + 1}
+            Level {currentLevel + 1}
           </span>
 
         </div>

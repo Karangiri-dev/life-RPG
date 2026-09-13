@@ -61,9 +61,9 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
-        message: "Invalid credentials",
+        message: "user not found",
       });
     }
 
@@ -106,6 +106,9 @@ export const login = async (req, res) => {
         xp: user.xp,
         gold: user.gold,
         streak: user.streak,
+
+        // 👇 Add this
+        attributes: user.attributes,
       },
     });
   } catch (error) {
@@ -117,7 +120,6 @@ export const login = async (req, res) => {
     });
   }
 };
-
 export const logout = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
@@ -227,3 +229,4 @@ export const getCurrentUser = async (req, res) => {
     });
   }
 };
+

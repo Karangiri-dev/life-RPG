@@ -34,6 +34,11 @@ const questSchema = new mongoose.Schema(
       default: false,
     },
 
+    completedAt: {
+      type: Date,
+      default: null,
+    },
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -42,7 +47,7 @@ const questSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Quest = mongoose.model("Quest", questSchema);

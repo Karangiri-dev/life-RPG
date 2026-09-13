@@ -185,6 +185,20 @@ export const completeQuest = async (req, res) => {
     user.xp += quest.xpReward;
     user.gold += quest.goldReward;
 
+    if (quest.difficulty === "easy") {
+      user.attributes.discipline += 1;
+    }
+
+    if (quest.difficulty === "medium") {
+      user.attributes.discipline += 2;
+      user.attributes.intelligence += 1;
+    }
+
+    if (quest.difficulty === "hard") {
+      user.attributes.discipline += 3;
+      user.attributes.intelligence += 2;
+    }
+
     const requiredXP = user.level * 100;
 
     if (user.xp >= requiredXP) {
@@ -205,6 +219,8 @@ export const completeQuest = async (req, res) => {
         level: user.level,
         xp: user.xp,
         gold: user.gold,
+        streak: user.streak,
+        attributes: user.attributes,
       },
     });
   } catch (error) {

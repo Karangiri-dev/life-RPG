@@ -9,7 +9,7 @@ const Navbar = () => {
 
   const [mobileMenu, setMobileMenu] = useState(false);
 
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, currentUser } = useAuth();
 
   // Logout
   const handleLogout = () => {
@@ -124,7 +124,9 @@ const Navbar = () => {
 
             {/* Level */}
             <div className="hidden lg:flex items-center gap-2 bg-slate-900 text-white px-3 py-2 rounded-xl">
-              <span className="text-sm font-semibold">Lvl 1</span>
+              <span className="text-sm font-semibold">
+                Lvl {currentUser?.level || 1}
+              </span>
             </div>
 
             {/* User Icon */}

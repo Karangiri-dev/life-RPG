@@ -51,22 +51,22 @@ const userSchema = new mongoose.Schema(
     attributes: {
       strength: {
         type: Number,
-        default: 0,
+        default: 70,
       },
 
       intelligence: {
         type: Number,
-        default: 0,
+        default: 65,
       },
 
       discipline: {
         type: Number,
-        default: 0,
+        default: 80,
       },
 
       health: {
         type: Number,
-        default: 0,
+        default: 70,
       },
     },
   },

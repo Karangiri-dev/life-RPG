@@ -1,13 +1,14 @@
-
 import React from "react";
 import { Coins, Gift } from "lucide-react";
-import { useXP } from "../context/XPContext";
+import { useAuth } from "../context/Authcontext";
 
 const RewardShop = () => {
-  const { gold, setGold } = useXP();
+  const { currentUser, setCurrentUser } = useAuth();
 
   const [message, setMessage] = React.useState("");
   const [messageType, setMessageType] = React.useState("");
+
+  const gold = currentUser?.gold || 0;
 
   const rewards = [
     {
@@ -37,7 +38,17 @@ const RewardShop = () => {
       return;
     }
 
-    setGold((prev) => prev - reward.cost);
+    const updatedUser = {
+      ...currentUser,
+      gold: currentUser.gold - reward.cost,
+    };
+
+    localStorage.setItem(
+      "lifeRPGCurrentUser",
+      JSON.stringify(updatedUser)
+    );
+
+    setCurrentUser(updatedUser);
 
     setMessage(`${reward.name} redeemed successfully!`);
     setMessageType("success");
@@ -45,12 +56,9 @@ const RewardShop = () => {
 
   return (
     <section className="min-h-screen bg-slate-50 p-5 sm:p-8">
-
       <div className="max-w-6xl mx-auto">
-
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
-
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
               Reward Shop
@@ -72,7 +80,6 @@ const RewardShop = () => {
               {gold} Gold
             </span>
           </div>
-
         </div>
 
         {/* Message */}
@@ -90,14 +97,11 @@ const RewardShop = () => {
 
         {/* Rewards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-
           {rewards.map((reward) => (
-
             <div
               key={reward.id}
               className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-orange-200 transition"
             >
-
               <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center mb-4">
                 <Gift
                   size={24}
@@ -114,7 +118,6 @@ const RewardShop = () => {
               </p>
 
               <div className="flex items-center justify-between mt-6">
-
                 <div className="flex items-center gap-1 text-sm font-semibold text-orange-600">
                   <Coins size={16} />
                   {reward.cost} Gold
@@ -126,20 +129,13 @@ const RewardShop = () => {
                 >
                   Redeem
                 </button>
-
               </div>
-
             </div>
-
           ))}
-
         </div>
-
       </div>
-
     </section>
   );
 };
 
-export default RewardShop;
-
+export default RewardShop;  

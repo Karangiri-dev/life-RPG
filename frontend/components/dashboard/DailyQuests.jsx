@@ -1,62 +1,106 @@
-import React from "react";
-import { Check, Clock, Zap } from "lucide-react";
-import { useXP } from "../context/XPContext";
+import React, { useEffect, useState } from "react";
+import { Check, Zap } from "lucide-react";
+import { apiFetch } from "../../utils/apifetch.js";
 
 const DailyQuests = () => {
-  const {
-    quests,
-    completeQuest,
-    completedQuests,
-  } = useXP();
+  const [quests, setQuests] = useState([]);
+  const [completedCount, setCompletedCount] = useState(0);
+
+  const fetchQuests = async () => {
+    try {
+      const response = await apiFetch("http://localhost:3000/api/quest");
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.log(data);
+        return;
+      }
+
+      const activeQuests = data.quests.filter((quest) => !quest.isCompleted);
+
+      const completedQuests = data.quests.filter((quest) => quest.isCompleted);
+
+      setQuests(activeQuests);
+      setCompletedCount(completedQuests.length);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuests();
+  }, []);
+
+  const handleCompleteQuest = async (quest) => {
+    try {
+      const response = await apiFetch(
+        `http://localhost:3000/api/quest/${quest._id}/complete`,
+        {
+          method: "PATCH",
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.log(data);
+        return;
+      }
+
+      const savedUser = JSON.parse(localStorage.getItem("lifeRPGCurrentUser"));
+
+      const updatedUser = {
+        ...savedUser,
+        level: data.user.level,
+        xp: data.user.xp,
+        gold: data.user.gold,
+        streak: data.user.streak,
+        attributes: data.user.attributes,
+      };
+
+      localStorage.setItem("lifeRPGCurrentUser", JSON.stringify(updatedUser));
+
+      window.dispatchEvent(new Event("userUpdated"));
+
+      fetchQuests();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <section className="mt-6 bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
-
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">
-            Daily Quests
-          </h2>
+          <h2 className="text-xl font-bold text-slate-900">Daily Quests</h2>
 
           <p className="text-sm text-slate-500 mt-1">
-            Complete your quests and earn XP
+            Complete your quests and earn rewards
           </p>
         </div>
 
         <span className="text-sm font-semibold text-orange-600">
-          {completedQuests.length} / {quests.length + completedQuests.length} Completed
+          {completedCount} / {quests.length + completedCount} Completed
         </span>
       </div>
 
       <div className="space-y-3">
-
-        {quests.length === 0 ? (
+        {quests.length === 0 ?
           <div className="text-center py-8 text-slate-500">
-            <p className="font-medium">
-              No active quests
-            </p>
+            <p className="font-medium">No active quests</p>
 
-            <p className="text-sm mt-1">
-              Go to Quests and create a new quest.
-            </p>
+            <p className="text-sm mt-1">Go to Quests and create a new quest.</p>
           </div>
-        ) : (
-          quests.map((quest) => (
+        : quests.map((quest) => (
             <div
-              key={quest.id}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border border-slate-200 rounded-xl hover:border-orange-200 transition"
-            >
-
+              key={quest._id}
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border border-slate-200 rounded-xl hover:border-orange-200 transition">
               <div className="flex items-start gap-3">
-
                 <button
-                  onClick={() => completeQuest(quest)}
-                  className="w-10 h-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-orange-50 hover:border-orange-200 transition"
-                >
-                  <Check
-                    size={19}
-                    className="text-slate-400"
-                  />
+                  onClick={() => handleCompleteQuest(quest)}
+                  className="w-10 h-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-orange-50 hover:border-orange-200 transition">
+                  <Check size={19} className="text-slate-400" />
                 </button>
 
                 <div>
@@ -65,32 +109,20 @@ const DailyQuests = () => {
                   </h3>
 
                   <div className="flex flex-wrap items-center gap-3 mt-2">
-
-                    <span className="text-xs bg-orange-50 text-orange-600 px-2 py-1 rounded-md font-medium">
-                      {quest.category}
+                    <span className="text-xs bg-orange-50 text-orange-600 px-2 py-1 rounded-md font-medium capitalize">
+                      {quest.difficulty}
                     </span>
-
-                    <span className="flex items-center gap-1 text-xs text-slate-400">
-                      <Clock size={13} />
-                      {quest.time}
-                    </span>
-
                   </div>
                 </div>
-
               </div>
 
-              <div className="flex items-center gap-1 text-sm font-semibold text-orange-600 ml-13 sm:ml-0">
-                <Zap size={16} />
-                +{quest.xp} XP
+              <div className="flex items-center gap-1 text-sm font-semibold text-orange-600">
+                <Zap size={16} />+{quest.xpReward} XP
               </div>
-
             </div>
           ))
-        )}
-
+        }
       </div>
-
     </section>
   );
 };
