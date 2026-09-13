@@ -1,12 +1,18 @@
+const API_BASE_URL = (
+  import.meta.env.VITE_API_URL || "https://life-rpg-6jie.onrender.com"
+).replace(/\/+$/, "");
+
 export const apiFetch = async (url, options = {}) => {
-  let response = await fetch(url, {
+  const requestUrl = new URL(url, `${API_BASE_URL}/`).toString();
+
+  let response = await fetch(requestUrl, {
     ...options,
     credentials: "include",
   });
 
   if (response.status === 401) {
     const refreshResponse = await fetch(
-      "https://life-rpg-6jie.onrender.com/api/auth/refresh-token",
+      `${API_BASE_URL}/api/auth/refresh-token`,
       {
         method: "POST",
         credentials: "include",
@@ -14,7 +20,7 @@ export const apiFetch = async (url, options = {}) => {
     );
 
     if (refreshResponse.ok) {
-      response = await fetch(url, {
+      response = await fetch(requestUrl, {
         ...options,
         credentials: "include",
       });

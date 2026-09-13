@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/context/Authcontext";
+import { apiFetch } from "../utils/apifetch";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const LoginPage = () => {
     try {
       setError("");
 
-      const response = await fetch("https://life-rpg-6jie.onrender.com", {
+      const response = await apiFetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

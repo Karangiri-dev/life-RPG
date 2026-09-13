@@ -21,7 +21,7 @@ const QuestsPage = () => {
 
   const fetchQuests = async () => {
     try {
-      const response = await apiFetch("https://life-rpg-6jie.onrender.com/api/quest", {
+      const response = await apiFetch("/api/quest", {
         credentials: "include",
       });
 
@@ -62,7 +62,7 @@ const QuestsPage = () => {
     }
 
     try {
-      const response = await apiFetch("https://life-rpg-6jie.onrender.com/api/quest", {
+      const response = await apiFetch("/api/quest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +98,7 @@ const QuestsPage = () => {
   const handleCompleteQuest = async (quest) => {
     try {
       const response = await apiFetch(
-        `https://life-rpg-6jie.onrender.com/api/quest/${quest._id}/complete`,
+        `/api/quest/${quest._id}/complete`,
         {
           method: "PATCH",
           credentials: "include",
@@ -133,7 +133,7 @@ const QuestsPage = () => {
   // Delete Active Quest
   const handleDeleteQuest = async (id) => {
     try {
-      const response = await apiFetch(`https://life-rpg-6jie.onrender.com/api/quest/${id}`, {
+      const response = await apiFetch(`/api/quest/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -153,7 +153,7 @@ const QuestsPage = () => {
   // Delete Completed Quest
   const handleDeleteCompletedQuest = async (id) => {
     try {
-      const response = await apiFetch(`https://life-rpg-6jie.onrender.com/api/quest/${id}`, {
+      const response = await apiFetch(`/api/quest/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
