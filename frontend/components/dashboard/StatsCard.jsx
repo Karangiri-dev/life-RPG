@@ -1,46 +1,42 @@
 import { Trophy, Sparkles, Coins, Flame } from "lucide-react";
-import { useXP } from "../context/XPContext";
 import { useAuth } from "../context/Authcontext";
 
 const StatsCard = () => {
-  const {
-    totalXP,
-    levelData,
-    streak,
-    gold,
-  } = useXP();
-
   const { currentUser } = useAuth();
 
+  
+  console.log("Current User:", currentUser);
+
   const stats = [
-  {
-    title: "Level",
-    value: currentUser?.level || 1,
-    subtitle: "Current level",
-    icon: Trophy,
-  },
-  {
-    title: "Experience",
-    value: `${currentUser?.xp || 0} XP`,
-    subtitle: "Keep completing quests",
-    icon: Sparkles,
-  },
-  {
-    title: "Gold",
-    value: currentUser?.gold || 0,
-    subtitle: "Available coins",
-    icon: Coins,
-  },
-  {
-    title: "Streak",
-    value: `${currentUser?.streak || 0} Days`,
-    subtitle:
-      (currentUser?.streak || 0) > 0
-        ? "Keep it going!"
-        : "Start your streak!",
-    icon: Flame,
-  },
-];
+    {
+      title: "Level",
+      value: currentUser?.level || 1,
+      subtitle: "Current level",
+      icon: Trophy,
+    },
+    {
+      title: "Experience",
+      value: `${currentUser?.xp || 0} XP`,
+      subtitle: "Keep completing quests",
+      icon: Sparkles,
+    },
+    {
+      title: "Gold",
+      value: currentUser?.gold || 0,
+      subtitle: "Available coins",
+      icon: Coins,
+    },
+    {
+      title: "Streak",
+      value: `${currentUser?.streak || 0} Days`,
+      subtitle:
+        (currentUser?.streak || 0) > 0
+          ? "Keep it going!"
+          : "Start your streak!",
+      icon: Flame,
+    },
+  ];
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat, index) => {
