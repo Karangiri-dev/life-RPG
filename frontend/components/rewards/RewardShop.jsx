@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import { Coins, Gift } from "lucide-react";
 import { useAuth } from "../context/Authcontext";
 
@@ -43,10 +44,7 @@ const RewardShop = () => {
       gold: currentUser.gold - reward.cost,
     };
 
-    localStorage.setItem(
-      "lifeRPGCurrentUser",
-      JSON.stringify(updatedUser)
-    );
+    localStorage.setItem("lifeRPGCurrentUser", JSON.stringify(updatedUser));
 
     setCurrentUser(updatedUser);
 
@@ -55,7 +53,11 @@ const RewardShop = () => {
   };
 
   return (
-    <section className="min-h-screen bg-slate-50 p-5 sm:p-8">
+    <motion.section
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="min-h-screen bg-slate-50 px-4 py-6 sm:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
@@ -71,14 +73,9 @@ const RewardShop = () => {
 
           {/* Gold */}
           <div className="flex items-center gap-2 bg-white border border-slate-200 px-4 py-3 rounded-xl shadow-sm">
-            <Coins
-              size={20}
-              className="text-orange-500"
-            />
+            <Coins size={20} className="text-orange-500" />
 
-            <span className="font-bold text-slate-900">
-              {gold} Gold
-            </span>
+            <span className="font-bold text-slate-900">{gold} Gold</span>
           </div>
         </div>
 
@@ -86,11 +83,10 @@ const RewardShop = () => {
         {message && (
           <div
             className={`mb-5 p-3 rounded-xl border font-medium ${
-              messageType === "success"
-                ? "bg-green-50 border-green-200 text-green-700"
-                : "bg-red-50 border-red-200 text-red-700"
-            }`}
-          >
+              messageType === "success" ?
+                "bg-green-50 border-green-200 text-green-700"
+              : "bg-red-50 border-red-200 text-red-700"
+            }`}>
             {message}
           </div>
         )}
@@ -98,15 +94,15 @@ const RewardShop = () => {
         {/* Rewards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {rewards.map((reward) => (
-            <div
+            <motion.div
               key={reward.id}
-              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-orange-200 transition"
-            >
+              whileHover={{
+                y: -3,
+                boxShadow: "0 12px 26px rgba(15, 23, 42, 0.08)",
+              }}
+              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm transition-colors hover:border-orange-200">
               <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center mb-4">
-                <Gift
-                  size={24}
-                  className="text-orange-600"
-                />
+                <Gift size={24} className="text-orange-600" />
               </div>
 
               <h2 className="text-lg font-bold text-slate-900">
@@ -123,19 +119,20 @@ const RewardShop = () => {
                   {reward.cost} Gold
                 </div>
 
-                <button
+                <motion.button
                   onClick={() => handleRedeem(reward)}
-                  className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition"
-                >
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold cursor-pointer hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 transition">
                   Redeem
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 
-export default RewardShop;  
+export default RewardShop;

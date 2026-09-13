@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/context/Authcontext";
 
@@ -58,7 +59,11 @@ const LoginPage = () => {
     }
   };
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[radial-gradient(circle_at_50%_-20%,#ffe9d6_0%,#fff7f0_45%,#ffffff_100%)] px-4 py-8">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+      className="min-h-screen w-full flex flex-col items-center justify-center bg-[radial-gradient(circle_at_50%_-20%,#ffe9d6_0%,#fff7f0_45%,#ffffff_100%)] px-4 py-8">
       {/* Brand Logo */}
       <div className="flex items-center gap-2 font-bold text-2xl text-slate-900 tracking-tight mb-8 cursor-pointer">
         <span className="text-orange-500 text-xl">&#10038;</span>
@@ -66,7 +71,11 @@ const LoginPage = () => {
       </div>
 
       {/* Login Card */}
-      <div className="w-full max-w-md bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-3xl p-8 shadow-xl shadow-orange-500/5">
+      <motion.div
+        initial={{ opacity: 0, y: 16, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.45, delay: 0.05 }}
+        className="w-full max-w-md bg-white/85 backdrop-blur-md border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-xl shadow-orange-500/5">
         {/* Badge */}
         <div className="flex justify-center mb-6">
           <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
@@ -112,7 +121,7 @@ const LoginPage = () => {
 
               <button
                 type="button"
-                className="text-xs text-orange-600 hover:underline font-medium">
+                className="text-xs text-orange-600 hover:underline font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 rounded">
                 Forgot password?
               </button>
             </div>
@@ -157,7 +166,7 @@ const LoginPage = () => {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-black hover:bg-slate-800 text-white font-semibold text-sm py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg mt-2">
+            className="w-full bg-black hover:bg-slate-800 text-white font-semibold text-sm py-3.5 rounded-full cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400">
             Sign In
           </button>
         </form>
@@ -168,12 +177,12 @@ const LoginPage = () => {
           <button
             type="button"
             onClick={() => navigate("/signup")}
-            className="text-orange-600 font-semibold hover:underline">
+            className="text-orange-600 font-semibold hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 rounded">
             Start Free Trial
           </button>
         </p>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

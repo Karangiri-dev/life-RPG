@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Check, Zap } from "lucide-react";
+import { motion } from "framer-motion";
 import { apiFetch } from "../../utils/apifetch.js";
 
 const DailyQuests = () => {
@@ -70,7 +71,11 @@ const DailyQuests = () => {
   };
 
   return (
-    <section className="mt-6 bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+    <motion.section
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.15 }}
+      className="mt-6 bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
       <div className="flex items-center justify-between mb-5">
         <div>
           <h2 className="text-xl font-bold text-slate-900">Daily Quests</h2>
@@ -93,13 +98,16 @@ const DailyQuests = () => {
             <p className="text-sm mt-1">Go to Quests and create a new quest.</p>
           </div>
         : quests.map((quest) => (
-            <div
+            <motion.div
               key={quest._id}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border border-slate-200 rounded-xl hover:border-orange-200 transition">
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -2, borderColor: "#fed7aa" }}
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border border-slate-200 rounded-xl transition-shadow hover:shadow-sm">
               <div className="flex items-start gap-3">
                 <button
                   onClick={() => handleCompleteQuest(quest)}
-                  className="w-10 h-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-orange-50 hover:border-orange-200 transition">
+                  className="w-10 h-10 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer hover:bg-orange-50 hover:border-orange-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 transition">
                   <Check size={19} className="text-slate-400" />
                 </button>
 
@@ -119,11 +127,11 @@ const DailyQuests = () => {
               <div className="flex items-center gap-1 text-sm font-semibold text-orange-600">
                 <Zap size={16} />+{quest.xpReward} XP
               </div>
-            </div>
+            </motion.div>
           ))
         }
       </div>
-    </section>
+    </motion.section>
   );
 };
 

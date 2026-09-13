@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Flame, Trophy, Clock, Zap, Coins } from "lucide-react";
 import { apiFetch } from "../../utils/apifetch.js";
 import { useAuth } from "../context/Authcontext.jsx";
@@ -35,7 +36,11 @@ const StreaksHistory = () => {
   const bestStreak = currentUser?.streak || 0;
 
   return (
-    <section className="min-h-screen bg-slate-50 p-5 sm:p-8">
+    <motion.section
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="min-h-screen bg-slate-50 px-4 py-6 sm:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -51,7 +56,9 @@ const StreaksHistory = () => {
         {/* Streak Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
           {/* Current Streak */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+          <motion.div
+            whileHover={{ y: -3 }}
+            className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
                 <Flame size={25} className="text-orange-500" />
@@ -65,10 +72,12 @@ const StreaksHistory = () => {
                 </h2>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Best Streak */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+          <motion.div
+            whileHover={{ y: -3 }}
+            className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center">
                 <Trophy size={25} className="text-yellow-500" />
@@ -82,7 +91,7 @@ const StreaksHistory = () => {
                 </h2>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* History */}
@@ -101,9 +110,11 @@ const StreaksHistory = () => {
             </div>
           : <div className="space-y-3">
               {completedQuests.map((quest) => (
-                <div
+                <motion.div
                   key={quest._id}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border border-slate-200 rounded-xl">
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border border-slate-200 rounded-xl transition-shadow hover:shadow-sm hover:border-orange-200">
                   {/* Quest Info */}
                   <div>
                     <h3 className="font-semibold text-slate-800">
@@ -132,13 +143,13 @@ const StreaksHistory = () => {
                       <Coins size={16} />+{quest.goldReward} Gold
                     </span>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           }
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

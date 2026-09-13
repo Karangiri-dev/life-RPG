@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Plus, X, Check, CheckCircle, Clock, Zap, Trash2 } from "lucide-react";
 
 import { useAuth } from "../context/Authcontext";
@@ -173,7 +174,11 @@ const QuestsPage = () => {
   const displayedQuests = activeTab === "active" ? quests : completedQuests;
 
   return (
-    <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <motion.main
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
@@ -188,7 +193,7 @@ const QuestsPage = () => {
 
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-xl text-sm font-semibold transition">
+          className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-xl text-sm font-semibold cursor-pointer transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400">
           <Plus size={18} />
           Add Quest
         </button>
@@ -198,7 +203,7 @@ const QuestsPage = () => {
       <div className="flex items-center gap-2 mb-6 border-b border-slate-200">
         <button
           onClick={() => setActiveTab("active")}
-          className={`px-4 py-3 text-sm font-semibold border-b-2 transition ${
+          className={`px-4 py-3 text-sm font-semibold border-b-2 cursor-pointer transition ${
             activeTab === "active" ?
               "text-orange-600 border-orange-500"
             : "text-slate-500 border-transparent"
@@ -208,7 +213,7 @@ const QuestsPage = () => {
 
         <button
           onClick={() => setActiveTab("completed")}
-          className={`px-4 py-3 text-sm font-semibold border-b-2 transition ${
+          className={`px-4 py-3 text-sm font-semibold border-b-2 cursor-pointer transition ${
             activeTab === "completed" ?
               "text-orange-600 border-orange-500"
             : "text-slate-500 border-transparent"
@@ -219,7 +224,10 @@ const QuestsPage = () => {
 
       {/* Quest List */}
       {displayedQuests.length === 0 ?
-        <div className="w-full min-h-75 flex flex-col items-center justify-center text-center border border-dashed border-slate-300 rounded-2xl bg-white">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="w-full min-h-75 flex flex-col items-center justify-center text-center border border-dashed border-slate-300 rounded-2xl bg-white px-6 py-10">
           {/* Empty State Icon */}
           <div
             className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 ${
@@ -246,16 +254,22 @@ const QuestsPage = () => {
           {activeTab === "active" && (
             <button
               onClick={() => setShowForm(true)}
-              className="mt-5 bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition">
+              className="mt-5 bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400">
               Create Task
             </button>
           )}
-        </div>
+        </motion.div>
       : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {displayedQuests.map((quest) => (
-            <div
+            <motion.div
               key={quest._id}
-              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition">
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{
+                y: -3,
+                boxShadow: "0 12px 26px rgba(15, 23, 42, 0.08)",
+              }}
+              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm transition-colors hover:border-orange-200">
               {/* Top */}
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -281,7 +295,7 @@ const QuestsPage = () => {
                       handleDeleteQuest(quest._id)
                     : handleDeleteCompletedQuest(quest._id)
                   }
-                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg cursor-pointer transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
                   title="Delete task">
                   <Trash2 size={18} />
                 </button>
@@ -309,7 +323,7 @@ const QuestsPage = () => {
               {activeTab === "active" && (
                 <button
                   onClick={() => handleCompleteQuest(quest)}
-                  className="w-full mt-5 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-xl text-sm font-semibold transition">
+                  className="w-full mt-5 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400">
                   <Check size={17} />
                   Complete Quest
                 </button>
@@ -322,7 +336,7 @@ const QuestsPage = () => {
                   Completed
                 </div>
               )}
-            </div>
+            </motion.div>
           ))}
         </div>
       }
@@ -419,7 +433,7 @@ const QuestsPage = () => {
           </div>
         </div>
       )}
-    </main>
+    </motion.main>
   );
 };
 

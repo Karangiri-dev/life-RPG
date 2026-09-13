@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import {
   Dumbbell,
   Brain,
@@ -48,7 +49,11 @@ const CharacterStats = () => {
   ];
 
   return (
-    <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <motion.main
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Page Header */}
       <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 shadow-sm">
         <div className="flex items-start gap-4">
@@ -75,9 +80,13 @@ const CharacterStats = () => {
           const value = attributes[attribute.name];
 
           return (
-            <div
+            <motion.div
               key={attribute.name}
-              className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+              whileHover={{
+                y: -3,
+                boxShadow: "0 12px 26px rgba(15, 23, 42, 0.08)",
+              }}
+              className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm transition-colors hover:border-orange-200">
               {/* Title */}
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
@@ -142,11 +151,11 @@ const CharacterStats = () => {
                   ))}
                 </div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </section>
-    </main>
+    </motion.main>
   );
 };
 

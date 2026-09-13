@@ -1,10 +1,6 @@
 import React from "react";
-import {
-  Dumbbell,
-  Brain,
-  ShieldCheck,
-  HeartPulse,
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { Dumbbell, Brain, ShieldCheck, HeartPulse } from "lucide-react";
 
 const CharacterAttributes = () => {
   const attributes = [
@@ -35,8 +31,11 @@ const CharacterAttributes = () => {
   ];
 
   return (
-    <section className="mt-6 bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
-
+    <motion.section
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="mt-6 bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-xl font-bold text-slate-900">
@@ -54,12 +53,11 @@ const CharacterAttributes = () => {
           const Icon = attribute.icon;
 
           return (
-            <div
+            <motion.div
               key={attribute.name}
-              className="border border-slate-200 rounded-xl p-4 hover:border-orange-200 transition"
-            >
+              whileHover={{ y: -2, borderColor: "#fed7aa" }}
+              className="border border-slate-200 rounded-xl p-4 transition-shadow hover:shadow-sm">
               <div className="flex items-center justify-between">
-
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-orange-50 border border-orange-100 flex items-center justify-center">
                     <Icon size={20} className="text-orange-500" />
@@ -79,7 +77,6 @@ const CharacterAttributes = () => {
                 <span className="text-lg font-bold text-orange-600">
                   {attribute.value}
                 </span>
-
               </div>
 
               {/* Progress Bar */}
@@ -91,13 +88,11 @@ const CharacterAttributes = () => {
                   />
                 </div>
               </div>
-
-            </div>
+            </motion.div>
           );
         })}
       </div>
-
-    </section>
+    </motion.section>
   );
 };
 
