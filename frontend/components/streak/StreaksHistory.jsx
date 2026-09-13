@@ -11,7 +11,7 @@ const StreaksHistory = () => {
 
   const fetchCompletedQuests = async () => {
     try {
-      const response = await apiFetch("http://localhost:3000/api/quest");
+      const response = await apiFetch("https://life-rpg-6jie.onrender.com/api/quest");
 
       const data = await response.json();
 

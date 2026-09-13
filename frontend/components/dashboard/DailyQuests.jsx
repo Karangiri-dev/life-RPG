@@ -9,7 +9,7 @@ const DailyQuests = () => {
 
   const fetchQuests = async () => {
     try {
-      const response = await apiFetch("http://localhost:3000/api/quest");
+      const response = await apiFetch("https://life-rpg-6jie.onrender.com/api/quest");
 
       const data = await response.json();
 
@@ -36,7 +36,7 @@ const DailyQuests = () => {
   const handleCompleteQuest = async (quest) => {
     try {
       const response = await apiFetch(
-        `http://localhost:3000/api/quest/${quest._id}/complete`,
+        `https://life-rpg-6jie.onrender.com/api/quest/${quest._id}/complete`,
         {
           method: "PATCH",
         },

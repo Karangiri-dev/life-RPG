@@ -6,7 +6,7 @@ export const apiFetch = async (url, options = {}) => {
 
   if (response.status === 401) {
     const refreshResponse = await fetch(
-      "http://localhost:3000/api/auth/refresh-token",
+      "https://life-rpg-6jie.onrender.com/api/auth/refresh-token",
       {
         method: "POST",
         credentials: "include",
