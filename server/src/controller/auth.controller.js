@@ -1,3 +1,4 @@
+
 import User from "../models/auth.model.js";
 import bcrypt from "bcryptjs";
 import { generateTokens } from "../utils/generate.js";
@@ -81,6 +82,8 @@ export const login = async (req, res) => {
 
     user.refreshToken = refreshToken;
     await user.save();
+
+    console.log("SETTING AUTH COOKIES");
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
